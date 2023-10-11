@@ -1,12 +1,12 @@
 spring:
   r2dbc:
-    url: r2dbc:postgresql://localhost:5435/kss
+    url: r2dbc:postgresql://localhost:5435/kss-order
     username: kss
     password: pass3321
     properties:
       schema: kss
   flyway:
-    url: jdbc:postgresql://localhost:5435/kss
+    url: jdbc:postgresql://localhost:5435/kss-order
     user: kss
     password: pass3321
     default-schema: kss
