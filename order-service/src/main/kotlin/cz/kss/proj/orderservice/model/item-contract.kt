@@ -5,34 +5,28 @@ import org.springframework.data.relational.core.mapping.Table
 import java.math.BigDecimal
 import java.time.Instant
 
-
-@Table("k_order")
-data class Order(
+@Table("item")
+data class Item(
     @Id
     val id: Long,
-    val priceSum: BigDecimal,
-    val status: OrderStatus,
-    val boolean: Boolean,
-    val orderLineItems: List<OrderLineItem>,
-    val customerId: Long,
-    val createdAt: Instant,
-    val updatedAt: Instant,
-)
-
-@Table("order_line_item")
-data class OrderLineItem(
-    @Id
-    val id: Long,
+    val name: String,
+    val description: String,
+    val price: BigDecimal,
     val count: Int,
-    val itemPrice: BigDecimal,
-    val itemPriceSum: BigDecimal,
-    val item: Item,
-    val order: Order,
+    val deleted: Boolean,
+    val itemCategory: ItemCategory,
+    val orderLineItems: List<OrderLineItem>,
+    val createdAt: Instant,
+    val updatedAt: Instant,
+    )
+
+@Table("item_category")
+data class ItemCategory(
+    @Id
+    val id: Long,
+    val category: String,
+    val description: String,
+    val items: List<Item>,
     val createdAt: Instant,
     val updatedAt: Instant,
 )
-
-@Table("order_status")
-enum class OrderStatus {
-    NEW, COMPLETED, CANCELED
-}
