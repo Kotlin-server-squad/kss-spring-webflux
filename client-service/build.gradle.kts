@@ -15,6 +15,8 @@ dependencies {
 
     runtimeOnly("org.postgresql:postgresql")
     runtimeOnly("org.postgresql:r2dbc-postgresql")
+    implementation("org.flywaydb:flyway-core")
+    implementation("org.springframework:spring-jdbc")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("io.kotest:kotest-runner-junit5-jvm:$kotest_version")
