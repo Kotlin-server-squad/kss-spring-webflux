@@ -10,3 +10,5 @@ spring:
     user: kss
     password: pass3321
     default-schema: kss
+server:
+  port: 8881

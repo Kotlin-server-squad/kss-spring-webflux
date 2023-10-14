@@ -9,7 +9,7 @@ CREATE SEQUENCE additional_information_id_seq;
 CREATE TABLE "address"
 (
     id         BIGINT      DEFAULT nextval('address_id_seq') PRIMARY KEY,
-    zipCode    INTEGER,
+    zip_code   INTEGER,
     street     VARCHAR(255),
     town       VARCHAR(255),
     country    VARCHAR(255),
@@ -20,21 +20,21 @@ CREATE TABLE "address"
 
 CREATE TABLE "additional_information"
 (
-    id         BIGINT      DEFAULT nextval('additional_information_id_seq') PRIMARY KEY,
-    birthDay   INTEGER,
-    birthMonth INTEGER,
-    birthYear  INTEGER,
-    gender     VARCHAR(255),
-    created_at TIMESTAMPTZ DEFAULT NOW(),
-    updated_at TIMESTAMPTZ DEFAULT NOW()
+    id          BIGINT      DEFAULT nextval('additional_information_id_seq') PRIMARY KEY,
+    birth_day   INTEGER,
+    birth_month INTEGER,
+    birth_year  INTEGER,
+    gender      VARCHAR(255),
+    created_at  TIMESTAMPTZ DEFAULT NOW(),
+    updated_at  TIMESTAMPTZ DEFAULT NOW()
 );
 
 CREATE TABLE "customer"
 (
     id                        BIGINT      DEFAULT nextval('customer_id_seq') PRIMARY KEY,
-    userName                  VARCHAR(255) NOT NULL,
-    firstName                 VARCHAR(255),
-    lastName                  VARCHAR(255),
+    user_name                 VARCHAR(255) NOT NULL,
+    first_name                VARCHAR(255),
+    last_name                 VARCHAR(255),
     address_id                BIGINT REFERENCES "address" (id),
     email                     VARCHAR(255) UNIQUE,
     additional_information_id BIGINT REFERENCES "additional_information" (id),
