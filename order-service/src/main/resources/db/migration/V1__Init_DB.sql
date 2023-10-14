@@ -10,8 +10,8 @@ CREATE TABLE "item_category"
     id          BIGINT DEFAULT nextval('item_category_id_seq') PRIMARY KEY,
     category    VARCHAR(255),
     description TEXT,
-    created_at  TIMESTAMPTZ,
-    updated_at  TIMESTAMPTZ
+    created_at  TIMESTAMP,
+    updated_at  TIMESTAMP
 );
 
 CREATE TABLE "item"
@@ -23,8 +23,8 @@ CREATE TABLE "item"
     count            INTEGER,
     deleted          BOOLEAN,
     item_category_id BIGINT REFERENCES "item_category" (id),
-    created_at       TIMESTAMPTZ,
-    updated_at       TIMESTAMPTZ
+    created_at       TIMESTAMP,
+    updated_at       TIMESTAMP
 );
 
 CREATE TABLE "k_order"
@@ -34,8 +34,8 @@ CREATE TABLE "k_order"
     status     VARCHAR(255),
     boolean    BOOLEAN,
     customerId BIGINT,
-    created_at TIMESTAMPTZ,
-    updated_at TIMESTAMPTZ
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP
 );
 
 CREATE TABLE "order_line_item"
@@ -46,8 +46,8 @@ CREATE TABLE "order_line_item"
     itemPriceSum NUMERIC,
     item_id      BIGINT REFERENCES "item" (id),
     order_id     BIGINT REFERENCES "k_order" (id),
-    created_at   TIMESTAMPTZ,
-    updated_at   TIMESTAMPTZ
+    created_at   TIMESTAMP,
+    updated_at   TIMESTAMP
 );
 
 -- Create indexes for improved query performance

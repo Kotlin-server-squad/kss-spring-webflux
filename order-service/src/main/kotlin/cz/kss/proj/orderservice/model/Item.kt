@@ -18,15 +18,4 @@ data class Item(
     val orderLineItems: List<OrderLineItem>,
     val createdAt: Instant,
     val updatedAt: Instant,
-    )
-
-@Table("item_category")
-data class ItemCategory(
-    @Id
-    val id: Long,
-    val category: String,
-    val description: String,
-    val items: List<Item>,
-    val createdAt: Instant,
-    val updatedAt: Instant,
 )
