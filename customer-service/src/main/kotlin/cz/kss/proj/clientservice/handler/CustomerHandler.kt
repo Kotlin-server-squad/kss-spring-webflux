@@ -20,4 +20,14 @@ class CustomerHandler(
                 .bodyValueAndAwait(createCustomer)
         } ?: ServerResponse.badRequest().buildAndAwait()
     }
+
+    suspend fun getCustomer(req: ServerRequest): ServerResponse {
+        val request = req.awaitBodyOrNull<CreateCustomerDto>()
+        return request?.let {
+            val createCustomer = customerService.createCustomer(request)
+            ServerResponse.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValueAndAwait(createCustomer)
+        } ?: ServerResponse.badRequest().buildAndAwait()
+    }
 }

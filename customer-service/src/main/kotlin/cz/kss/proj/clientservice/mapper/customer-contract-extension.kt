@@ -12,12 +12,12 @@ fun CreateCustomerDto.toEntity(): Customer = Customer(
     userName = this.userName,
     firstName = this.firstName,
     lastName = this.lastName,
-    address = this.address.toEntity(),
     email = this.email,
+    address = this.address.toEntity(),
     additionalInformation = this.additionalInformation.toEntity()
 )
 
-fun AddressDto.toEntity(): Address = Address(
+fun CreateAddressDto.toEntity(): Address = Address(
     id = null,
     zipCode = this.zipCode,
     street = this.street,
@@ -26,7 +26,7 @@ fun AddressDto.toEntity(): Address = Address(
     region = this.region
 )
 
-fun AdditionalInformationDto.toEntity(): AdditionalInformation = AdditionalInformation(
+fun CreateAdditionalInformationDto.toEntity(): AdditionalInformation = AdditionalInformation(
     id = null,
     birthDay = this.birthDay,
     birthMonth = this.birthMonth,
@@ -40,23 +40,29 @@ fun GenderDto.toEntity(): Gender = when (this) {
     GenderDto.NON -> Gender.FEMALE
 }
 
-fun Customer.toDto(): CreateCustomerDto = CreateCustomerDto(
+fun Customer.toDto(): CustomerDto = CustomerDto(
+    id = this.id,
     userName = this.userName, firstName = this.firstName, lastName = this.lastName,
-    address = this.address.toDto(),
+    address = this.address!!.toDto(),
     email = this.email,
-    additionalInformation = this.additionalInformation.toDto()
+    additionalInformation = this.additionalInformation!!.toDto()
 )
 
 fun Address.toDto(): AddressDto = AddressDto(
+    id = this.id,
     zipCode = this.zipCode,
     street = this.street,
     town = this.town,
     country = this.country,
-    region = this.region
+    region = this.region,
 )
 
 fun AdditionalInformation.toDto(): AdditionalInformationDto = AdditionalInformationDto(
-    birthDay = this.birthDay, birthMonth = this.birthMonth, birthYear = this.birthYear, gender = this.gender.toDto()
+    id = this.id,
+    birthDay = this.birthDay,
+    birthMonth = this.birthMonth,
+    birthYear = this.birthYear,
+    gender = this.gender.toDto()
 )
 
 fun Gender.toDto(): GenderDto = when (this) {
@@ -64,3 +70,6 @@ fun Gender.toDto(): GenderDto = when (this) {
     Gender.FEMALE -> GenderDto.FEMALE
     Gender.NON -> GenderDto.NON
 }
+
+
+

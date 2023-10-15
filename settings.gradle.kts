@@ -3,7 +3,7 @@ plugins {
 }
 rootProject.name = "spring-webflux-coroutines"
 
-include(":client-service")
+include(":customer-service")
 include(":delivery-service")
 include(":notification-service")
 include(":order-service")
