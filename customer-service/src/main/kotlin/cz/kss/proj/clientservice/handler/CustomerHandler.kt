@@ -1,15 +1,11 @@
 package cz.kss.proj.clientservice.handler
 
-import cz.kss.proj.clientservice.config.filter.TracingWebFilter
 import cz.kss.proj.clientservice.dto.CreateCustomerDto
 import cz.kss.proj.clientservice.dto.GetCustomerRequest
 import cz.kss.proj.clientservice.service.CustomerService
-import kotlinx.coroutines.reactor.ReactorContext
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.server.*
-import reactor.util.context.Context
-import kotlin.coroutines.coroutineContext
 
 @Component
 class CustomerHandler(
