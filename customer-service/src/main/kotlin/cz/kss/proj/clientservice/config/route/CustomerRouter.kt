@@ -18,6 +18,7 @@ class CustomerRouter(
                 GET("",)
                 contentType(APPLICATION_JSON).nest {
                     POST("", customerHandler::createCustomer)
+                    POST("/get",customerHandler::getCustomer)
                 }
             }
         }

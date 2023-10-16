@@ -1,0 +1,9 @@
+###
+POST http://localhost:8881/api/customer/get
+Content-Type: application/json
+Trace-Id: 1234a
+Span-Id: test1234
+
+{
+  "customerId": 1
+}

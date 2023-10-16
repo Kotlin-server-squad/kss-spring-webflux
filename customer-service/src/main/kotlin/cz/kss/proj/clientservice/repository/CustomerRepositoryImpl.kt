@@ -1,20 +1,28 @@
 package cz.kss.proj.clientservice.repository
 
 import cz.kss.proj.clientservice.entity.Customer
+import cz.kss.proj.clientservice.entity.customerFromRow
+import io.r2dbc.spi.Row
+import io.r2dbc.spi.RowMetadata
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.reactive.awaitSingleOrNull
 import kotlinx.coroutines.reactor.awaitSingle
+import kotlinx.coroutines.reactor.awaitSingleOrNull
+import org.springframework.data.r2dbc.convert.R2dbcConverter
 import org.springframework.r2dbc.core.DatabaseClient
 import org.springframework.stereotype.Repository
+import reactor.kotlin.core.publisher.toMono
+
 
 @Repository
-interface CustomerRepositoryT : BaseRepository<Customer, Long>
+interface CustomerRepository : BaseRepository<Customer, Long>
 
 @Repository
-class CustomerRepositoryTest(
+class CustomerRepositoryImpl(
     private val dbClient: DatabaseClient,
-    private val addressRepositoryTest: AddressRepositoryTest,
-    private val additionalInformationRepositoryTest: AdditionalInformationRepositoryTest,
-) : CustomerRepositoryT {
+    private val addressRepository: AddressRepository,
+    private val additionalInformationRepository: AdditionalInformationRepository,
+) : CustomerRepository {
     override fun findAll(): Flow<Customer> {
         TODO("Not yet implemented")
     }
@@ -35,7 +43,9 @@ class CustomerRepositoryTest(
         return if (
             (row["id"] == null || row["id"] !is Long) ||
             (row["user_name"] == null) ||
-            (row["email"] == null)
+            (row["email"] == null) ||
+            (row["first_name"] == null) ||
+            (row["last_name"] == null)
         ) {
             null
         } else {
@@ -92,18 +102,45 @@ class CustomerRepositoryTest(
     }
 
     suspend fun saveAddress(entity: Customer): Customer {
-        val t = addressRepositoryTest.save(entity.address!!)
+        val t = addressRepository.save(entity.address!!)
         entity.address = t
         return entity
     }
 
     suspend fun saveAdditionalInformation(entity: Customer): Customer {
-        val t = additionalInformationRepositoryTest.save(entity.additionalInformation!!)
+        val t = additionalInformationRepository.save(entity.additionalInformation!!)
         entity.additionalInformation = t
         return entity
     }
 
     override suspend fun findById(id: Long): Customer? {
-        TODO("Not yet implemented")
+        return dbClient.sql(GET_CUSTOMER_BY_ID)
+            .bind("id",id)
+            .fetch()
+            .first()
+            .flatMap { customerFromRow("c",it).toMono() }
+            .awaitSingleOrNull()
+    }
+
+
+    private inline fun <reified T> R2dbcConverter.read(row: Row, aliasPrefix: String): T = read(T::class.java,
+        object : Row {
+            override fun <T : Any?> get(index: Int, type: Class<T>) = row[index, type]
+            override fun <T : Any?> get(name: String, type: Class<T>) = row["$aliasPrefix$name", type]
+            override fun getMetadata(): RowMetadata {
+                TODO("Not yet implemented")
+            }
+        }
+    )
+    companion object{
+        private const val GET_CUSTOMER_BY_ID="""
+       select c.id c_id,c.user_name,c.last_name,c.first_name,c.email,
+       ai.id ai_id,ai.birth_day,ai.birth_month,ai.birth_year,ai.gender,
+       a.id a_id,a.country,a.region,a.street,a.town,a.zip_code
+from customer c
+         left join additional_information ai on ai.id = c.additional_information_id
+         left outer join address a on a.id = c.address_id
+where c.id = :id;
+        """
     }
 }

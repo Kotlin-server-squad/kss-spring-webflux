@@ -1,7 +1,6 @@
 package cz.kss.proj.clientservice.entity
 
 import org.springframework.data.annotation.Id
-import org.springframework.data.relational.core.mapping.Column
 import org.springframework.data.relational.core.mapping.Table
 
 @Table("customer")
@@ -17,17 +16,26 @@ data class Customer(
     @Transient
     var additionalInformation: AdditionalInformation?,
 ) {
-//    fun fromRow(row: HashMap<String, Any>): Customer {
-//        return Customer(
-//            id = row["id"] as Long,
-//            userName = row["user_name"] as String,
-//            firstName = row["first_name"] as String,
-//            lastName = row["last_name"] as String,
-//            addressId = row["address_id"] as Long,
-//            address =,
-//            additionalInformationId = row["additional_information_id"] as Long,
-//            additionalInformation =,
-//            email = row["email"] as String,
-//        )
-//    }
+    companion object {
+        const val ID = "id"
+        const val USER_NAME = "user_name"
+        const val LAST_NAME = "last_name"
+        const val FIRST_NAME = "first_name"
+        const val EMAIL = "email"
+    }
+}
+
+fun customerFromRow(prefix: String, row: Map<String, Any>): Customer? {
+
+    return row["${prefix}_${Customer.ID}"]?.let {
+        Customer(
+            id = it as Long,
+            userName = row[Customer.USER_NAME] as String,
+            firstName = row[Customer.LAST_NAME] as String,
+            lastName = row[Customer.FIRST_NAME] as String,
+            email = row[Customer.EMAIL] as String,
+            address = addressFromRow("a",row),
+            additionalInformation = additionalInformationFromRow("ai",row)
+        )
+    }
 }

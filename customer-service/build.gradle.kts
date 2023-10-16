@@ -12,6 +12,8 @@ dependencies {
     implementation("io.projectreactor.kotlin:reactor-kotlin-extensions:$kotlinx_reactor_version")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:$kotlinx_version")
+    runtimeOnly("org.jetbrains.kotlinx:kotlinx-coroutines-slf4j:$kotlinx_version")
+
 
     runtimeOnly("org.postgresql:postgresql")
     runtimeOnly("org.postgresql:r2dbc-postgresql")
