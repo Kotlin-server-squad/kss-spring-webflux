@@ -35,8 +35,8 @@ class CustomerRepositoryImpl(private val dbClient: DatabaseClient) : CustomerRep
     }
 
     override suspend fun save(entity: Customer): Customer {
-        return entity {
-            entity.id?.let { id ->
+        return entity.id?.let { id ->
+            update {
                 dbClient.sql(
                     """
                         UPDATE customer SET name = :name, email = :email WHERE id = :id
@@ -45,7 +45,9 @@ class CustomerRepositoryImpl(private val dbClient: DatabaseClient) : CustomerRep
                     .bind("id", id)
                     .bind("name", entity.name)
                     .bind("email", entity.email)
-            } ?: run {
+            }
+        } ?: run {
+            insert(entity) {
                 dbClient.sql(
                     """
                         INSERT INTO customer (name, email) VALUES (:name, :email)
@@ -54,7 +56,7 @@ class CustomerRepositoryImpl(private val dbClient: DatabaseClient) : CustomerRep
                     .bind("name", entity.name)
                     .bind("email", entity.email)
             }
-        } ?: throw IllegalStateException("Entity not saved")
+        }
     }
 
     override suspend fun delete(entity: Customer): Boolean {
@@ -70,9 +72,11 @@ class CustomerRepositoryImpl(private val dbClient: DatabaseClient) : CustomerRep
     }
 
     override suspend fun deleteAll(): Boolean {
-        dbClient.sql("""
+        dbClient.sql(
+            """
             DELETE FROM customer
-        """.trimIndent())
+        """.trimIndent()
+        )
         return true
     }
 

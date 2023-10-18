@@ -1,10 +1,23 @@
+-- Create schema for the application
+CREATE SCHEMA IF NOT EXISTS kss;
+
 -- Create sequences for ID columns
+CREATE SEQUENCE customer_id_seq;
 CREATE SEQUENCE item_id_seq;
 CREATE SEQUENCE item_category_id_seq;
 CREATE SEQUENCE k_order_id_seq;
 CREATE SEQUENCE order_line_item_id_seq;
 
 -- Create tables for entities
+CREATE TABLE customer
+(
+    id         BIGINT DEFAULT nextval('customer_id_seq') PRIMARY KEY,
+    name       VARCHAR(255),
+    email      VARCHAR(255)
+--     created_at TIMESTAMP,
+--     updated_at TIMESTAMP
+);
+
 CREATE TABLE "item_category"
 (
     id          BIGINT DEFAULT nextval('item_category_id_seq') PRIMARY KEY,
