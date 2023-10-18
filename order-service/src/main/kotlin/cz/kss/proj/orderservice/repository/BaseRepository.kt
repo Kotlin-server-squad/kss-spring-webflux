@@ -4,9 +4,9 @@ import cz.kss.proj.orderservice.model.BaseEntity
 import io.r2dbc.spi.Statement
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.mapNotNull
-import kotlinx.coroutines.reactor.awaitSingle
 import kotlinx.coroutines.reactor.awaitSingleOrNull
 import org.springframework.r2dbc.core.DatabaseClient.GenericExecuteSpec
+import org.springframework.r2dbc.core.awaitRowsUpdated
 
 interface BaseRepository<T : BaseEntity<I>, I> {
     fun findAll(): Flow<T>
@@ -18,21 +18,23 @@ interface BaseRepository<T : BaseEntity<I>, I> {
     @Suppress("UNCHECKED_CAST")
     suspend fun insert(entity: T, f: () -> GenericExecuteSpec): T {
         f().filter { statement: Statement, _ ->
-                statement.returnGeneratedValues("id").execute()
-            }.fetch().first().doOnNext { row ->
-                entity.id = row["id"] as I
-            }.awaitSingleOrNull()
+            statement.returnGeneratedValues("id").execute()
+        }.fetch().first().doOnNext { row ->
+            entity.id = row["id"] as I
+        }.awaitSingleOrNull()
         return entity
     }
-    @Suppress("UNCHECKED_CAST")
-    suspend fun update(f: () -> GenericExecuteSpec): T {
-        val row = f().filter { statement: Statement, _ ->
-            statement.returnGeneratedValues("id").execute()
-        }.fetch().first().awaitSingle()
-        return findById(row["id"] as I) ?: throw RuntimeException("Entity not found")
+
+    suspend fun update(entity: T, f: () -> GenericExecuteSpec): T {
+        return entity(f) ?: entity
     }
+
+    suspend fun delete(f: () -> GenericExecuteSpec): Boolean {
+        return f().fetch().awaitRowsUpdated() > 0
+    }
+
     suspend fun entity(f: () -> GenericExecuteSpec): T? {
-        return f().fetch().one().mapNotNull { toEntity(it) }.awaitSingle()
+        return f().fetch().first().mapNotNull { toEntity(it) }.awaitSingleOrNull()
     }
 
     fun entities(f: () -> Flow<MutableMap<String, Any>>): Flow<T> {

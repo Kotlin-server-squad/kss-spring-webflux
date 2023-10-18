@@ -36,7 +36,7 @@ class CustomerRepositoryImpl(private val dbClient: DatabaseClient) : CustomerRep
 
     override suspend fun save(entity: Customer): Customer {
         return entity.id?.let { id ->
-            update {
+            update(entity) {
                 dbClient.sql(
                     """
                         UPDATE customer SET name = :name, email = :email WHERE id = :id
@@ -61,23 +61,25 @@ class CustomerRepositoryImpl(private val dbClient: DatabaseClient) : CustomerRep
 
     override suspend fun delete(entity: Customer): Boolean {
         return entity.id?.let { id ->
-            dbClient.sql(
-                """
-                    DELETE FROM customer WHERE id = :id
-                """.trimIndent()
-            )
-                .bind("id", id)
-            true
+            delete {
+                dbClient.sql(
+                    """
+                        DELETE FROM customer WHERE id = :id
+                    """.trimIndent()
+                )
+                    .bind("id", id)
+            }
         } ?: false
     }
 
     override suspend fun deleteAll(): Boolean {
-        dbClient.sql(
-            """
-            DELETE FROM customer
-        """.trimIndent()
-        )
-        return true
+        return delete {
+            dbClient.sql(
+                """
+                    DELETE FROM customer
+                """.trimIndent()
+            )
+        }
     }
 
     override fun toEntity(row: MutableMap<String, Any>): Customer? {
