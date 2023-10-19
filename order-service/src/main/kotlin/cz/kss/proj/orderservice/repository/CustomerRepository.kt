@@ -14,11 +14,14 @@ interface CustomerRepository : BaseRepository<Customer, Long> {
 
 @Repository
 class CustomerRepositoryImpl(private val dbClient: DatabaseClient) : CustomerRepository {
+    companion object {
+        private const val SELECT_ALL = "SELECT c.id, c.first_name, c.last_name, c.email, c.created_at, c.updated_at FROM customer c"
+    }
     override fun findAll(): Flow<Customer> {
         return entities {
             dbClient.sql(
                 """
-                    SELECT c.id, c.name, c.email FROM customer c
+                    $SELECT_ALL
                 """.trimIndent()
             ).fetch().flow()
         }
@@ -28,66 +31,78 @@ class CustomerRepositoryImpl(private val dbClient: DatabaseClient) : CustomerRep
         return entity {
             dbClient.sql(
                 """
-                    SELECT c.id, c.name, c.email FROM customer c WHERE c.id = :id
+                    $SELECT_ALL WHERE c.id = :id
                 """.trimIndent()
             ).bind("id", id)
         }
     }
 
     override suspend fun save(entity: Customer): Customer {
-        return entity {
-            entity.id?.let { id ->
+        return entity.id?.let { id ->
+            update(entity) {
                 dbClient.sql(
                     """
-                        UPDATE customer SET name = :name, email = :email WHERE id = :id
+                        UPDATE customer c SET c.first_name = :first_name, c.last_name = :last_name,  c.email = :email WHERE id = :id
                     """.trimIndent()
                 )
                     .bind("id", id)
-                    .bind("name", entity.name)
-                    .bind("email", entity.email)
-            } ?: run {
-                dbClient.sql(
-                    """
-                        INSERT INTO customer (name, email) VALUES (:name, :email)
-                    """.trimIndent()
-                )
-                    .bind("name", entity.name)
+                    .bind("first_name", entity.firstName)
+                    .bind("last_name", entity.lastName)
                     .bind("email", entity.email)
             }
-        } ?: throw IllegalStateException("Entity not saved")
+        } ?: run {
+            insert(entity) {
+                dbClient.sql(
+                    """
+                        INSERT INTO customer (first_name, last_name, email) VALUES (:first_name, :last_name, :email)
+                    """.trimIndent()
+                )
+                    .bind("first_name", entity.firstName)
+                    .bind("last_name", entity.lastName)
+                    .bind("email", entity.email)
+            }
+        }
     }
 
     override suspend fun delete(entity: Customer): Boolean {
         return entity.id?.let { id ->
-            dbClient.sql(
-                """
-                    DELETE FROM customer WHERE id = :id
-                """.trimIndent()
-            )
-                .bind("id", id)
-            true
+            delete {
+                dbClient.sql(
+                    """
+                        DELETE FROM customer WHERE id = :id
+                    """.trimIndent()
+                )
+                    .bind("id", id)
+            }
         } ?: false
     }
 
     override suspend fun deleteAll(): Boolean {
-        dbClient.sql("""
-            DELETE FROM customer
-        """.trimIndent())
-        return true
+        return delete {
+            dbClient.sql(
+                """
+                    DELETE FROM customer
+                """.trimIndent()
+            )
+        }
     }
 
-    override fun toEntity(row: MutableMap<String, Any>): Customer? {
+    override fun    toEntity(row: MutableMap<String, Any>): Customer? {
         return if (
             (row["id"] == null || row["id"] !is Long) ||
-            (row["name"] == null) ||
+            (row["first_name"] == null) ||
+            (row["last_name"] == null) ||
             (row["email"] == null)
         ) {
             null
         } else {
             Customer(
                 id = row["id"] as Long,
-                name = row["name"] as String,
-                email = row["email"] as String
+                firstName = row["first_name"] as String,
+                lastName = row["last_name"] as String,
+                email = row["email"] as String,
+                createdAt = row.toMaybeInstant ("created_at"),
+                updatedAt = row.toMaybeInstant("updated_at")
             )
         }
     }
