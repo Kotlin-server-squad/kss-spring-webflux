@@ -1,5 +1,6 @@
 package cz.kss.proj.customerservice.service.impl
 
+import cz.kss.proj.customerservice.config.context.CorrelationIdContext
 import cz.kss.proj.customerservice.config.context.TraceIdContext
 import cz.kss.proj.customerservice.dto.CreateCustomerDto
 import cz.kss.proj.customerservice.dto.CustomerDto
@@ -21,13 +22,10 @@ class CustomerServiceImpl(
     }
 
     override suspend fun getCustomer(customerId: Long) {
-//        val reactorContext = coroutineContext[ReactorContext]?.context ?: Context.empty()
-//        val traceId = reactorContext.getOrDefault(TracingWebFilter.TRACE_ID, "UnknownTraceId")
-//        val spanId = reactorContext.getOrDefault(TracingWebFilter.SPAN_ID, "UnknownSpanId")
-
+        logger.info("Customer id $customerId")
         customerRepository.findById(customerId)?.let {
             val traceId = coroutineContext[TraceIdContext]
-            val correlationIdContext = coroutineContext[TraceIdContext]
+            val correlationIdContext = coroutineContext[CorrelationIdContext]
             logger.info("traceId $traceId correlationId $correlationIdContext customer $it")
         }
     }

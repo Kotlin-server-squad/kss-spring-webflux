@@ -16,8 +16,6 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:$kotlinx_version")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-slf4j:$kotlinx_version")
     implementation("ch.qos.logback:logback-classic:$logback_version")
-    // https://mvnrepository.com/artifact/io.github.microutils/kotlin-logging-jvm
-    runtimeOnly("io.github.microutils:kotlin-logging-jvm:$kotlin_logging_version")
 
 
     runtimeOnly("org.postgresql:postgresql")

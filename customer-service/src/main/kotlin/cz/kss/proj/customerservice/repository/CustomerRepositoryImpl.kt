@@ -1,16 +1,25 @@
 package cz.kss.proj.customerservice.repository
 
+import cz.kss.proj.customerservice.config.context.CorrelationIdContext
+import cz.kss.proj.customerservice.config.context.TraceIdContext
 import cz.kss.proj.customerservice.entity.Customer
 import cz.kss.proj.customerservice.entity.customerFromRow
 import io.r2dbc.spi.Row
 import io.r2dbc.spi.RowMetadata
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.reactor.awaitSingle
 import kotlinx.coroutines.reactor.awaitSingleOrNull
+import kotlinx.coroutines.slf4j.MDCContext
+import kotlinx.coroutines.withContext
+import org.slf4j.Logger
+import org.slf4j.MDC
 import org.springframework.data.r2dbc.convert.R2dbcConverter
 import org.springframework.r2dbc.core.DatabaseClient
 import org.springframework.stereotype.Repository
 import reactor.kotlin.core.publisher.toMono
+import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.coroutineContext
 
 
 @Repository
@@ -21,6 +30,8 @@ class CustomerRepositoryImpl(
     private val dbClient: DatabaseClient,
     private val addressRepository: AddressRepository,
     private val additionalInformationRepository: AdditionalInformationRepository,
+    private val logger: Logger,
+    private val defaultCoroutineContext: CoroutineContext
 ) : CustomerRepository {
     override fun findAll(): Flow<Customer> {
         TODO("Not yet implemented")
@@ -113,24 +124,21 @@ class CustomerRepositoryImpl(
     }
 
     override suspend fun findById(id: Long): Customer? {
-        return dbClient.sql(GET_CUSTOMER_BY_ID)
-            .bind("id",id)
-            .fetch()
-            .first()
-            .flatMap { customerFromRow("c",it).toMono() }
-            .awaitSingleOrNull()
+        val traceIdContext = coroutineContext[TraceIdContext]
+        val correlationIdContext = coroutineContext[CorrelationIdContext]
+        logger.info("$traceIdContext $correlationIdContext find by id $id")
+        val currentMdc = MDC.getCopyOfContextMap()
+
+         return withContext(defaultCoroutineContext + MDCContext(currentMdc)) {
+            dbClient.sql(GET_CUSTOMER_BY_ID)
+                .bind("id", id)
+                .fetch()
+                .first()
+                .flatMap { customerFromRow("c", it).toMono() }
+                .awaitSingleOrNull()
+        }
     }
 
-
-    private inline fun <reified T> R2dbcConverter.read(row: Row, aliasPrefix: String): T = read(T::class.java,
-        object : Row {
-            override fun <T : Any?> get(index: Int, type: Class<T>) = row[index, type]
-            override fun <T : Any?> get(name: String, type: Class<T>) = row["$aliasPrefix$name", type]
-            override fun getMetadata(): RowMetadata {
-                TODO("Not yet implemented")
-            }
-        }
-    )
     companion object{
         private const val GET_CUSTOMER_BY_ID="""
        select c.id c_id,c.user_name,c.last_name,c.first_name,c.email,
