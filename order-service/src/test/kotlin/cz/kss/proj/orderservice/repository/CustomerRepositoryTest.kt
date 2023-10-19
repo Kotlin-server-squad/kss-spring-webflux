@@ -1,6 +1,7 @@
 package cz.kss.proj.orderservice.repository
 
 import cz.kss.proj.orderservice.model.Customer
+import cz.kss.proj.orderservice.verifySavedEntity
 import io.kotest.common.runBlocking
 import kotlinx.coroutines.flow.toList
 import org.flywaydb.core.Flyway
@@ -44,12 +45,14 @@ class CustomerRepositoryTest {
     fun `should save a new customer`() = runBlocking {
         val customer = customerRepository.save(
             customer(
-                "John Doe",
+                "John",
+                "Doe",
                 "john.doe@gmail.com"
             )
         )
         assertNotNull(customer.id, "Customer ID should not be null")
-        assertEquals("John Doe", customer.name)
+        assertEquals("John", customer.firstName)
+        assertEquals("Doe", customer.lastName)
         assertEquals("john.doe@gmail.com", customer.email)
     }
 
@@ -57,18 +60,19 @@ class CustomerRepositoryTest {
     fun `should update an existing customer`() = runBlocking {
         val customer = customerRepository.save(
             customer(
-                "John Doe",
+                "John",
+                "Doe",
                 "john.doe@gmail.com"
             )
         )
         val updatedCustomer = customerRepository.save(
-            customer.copy(name = "Jane Doe", email = "jane.doe@gmail.com")
+            customer.copy(firstName = "Jane", lastName = "Doe", email = "jane.doe@gmail.com")
         )
         assertEquals(updatedCustomer.id, customer.id, "Customer ID should not change")
         val foundCustomer = updatedCustomer.id?.let {
             customerRepository.findById(it)
         } ?: fail("Customer not found")
-        assertEquals(updatedCustomer, foundCustomer, "Customer should be updated")
+        verifySavedEntity(updatedCustomer, foundCustomer)
     }
 
     @Test
@@ -77,21 +81,33 @@ class CustomerRepositoryTest {
             val foundCustomer = customer.id?.let {
                 customerRepository.findById(it)
             } ?: fail("Customer not found")
-            assertEquals(customer, foundCustomer, "Customer should be found")
+            assertEquals(customer.id, foundCustomer.id, "Customer ID should match")
+            assertEquals(customer.firstName, foundCustomer.firstName, "Customer first name should match")
+            assertEquals(customer.lastName, foundCustomer.lastName, "Customer last name should match")
+            assertEquals(customer.email, foundCustomer.email, "Customer email should match")
+            assertNotNull(foundCustomer.createdAt, "Customer created_at should not be null")
+            assertNotNull(foundCustomer.updatedAt, "Customer updated_at should not be null")
         }
     }
 
     @Test
     fun `should find all customers`() = runBlocking {
         val customers = createAndSaveCustomers()
-        assertEquals(customers, customerRepository.findAll().toList(), "Customers should be found")
+        val foundCustomers = customerRepository.findAll().toList()
+        assertEquals(customers.size, foundCustomers.size, "Number of customers should match")
+        customers.forEach { customer ->
+            val foundCustomer = foundCustomers.find { it.email == customer.email }
+            assertNotNull(foundCustomer, "Customer should be found")
+            verifySavedEntity(customer, foundCustomer!!)
+        }
     }
 
     @Test
     fun `should delete a customer`() = runBlocking {
         val customer = customerRepository.save(
             customer(
-                "John Toe",
+                "John",
+                "Toe",
                 "john.toe@gmail.com"
             )
         )
@@ -99,15 +115,15 @@ class CustomerRepositoryTest {
         assertNull(customerRepository.findById(customer.id!!), "Customer should not be found")
     }
 
-    private fun customer(name: String, email: String): Customer {
-        return Customer(null, name, email)
+    private fun customer(firstName: String, lastName: String, email: String): Customer {
+        return Customer(null, firstName, lastName, email)
     }
 
     private suspend fun createAndSaveCustomers(): List<Customer> {
         val customers = listOf(
-            customer("John Doe", "john.doe@gmail.com"),
-            customer("Jane Doe", "jane.doe@gmail.com"),
-            customer("Tomas Test", "tomas@test.com"),
+            customer("John", "Doe", "john.doe@gmail.com"),
+            customer("Jane", "Doe", "jane.doe@gmail.com"),
+            customer("Tomas", "Test", "tomas@test.com"),
         ).map { customerRepository.save(it) }
         assertTrue(customers.isNotEmpty(), "Customers should not be empty")
         assertTrue(customers.all { it.id != null }, "All customers should be saved")

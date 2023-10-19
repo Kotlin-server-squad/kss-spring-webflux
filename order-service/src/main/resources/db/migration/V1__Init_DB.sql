@@ -11,11 +11,12 @@ CREATE SEQUENCE order_line_item_id_seq;
 -- Create tables for entities
 CREATE TABLE customer
 (
-    id         BIGINT DEFAULT nextval('customer_id_seq') PRIMARY KEY,
-    name       VARCHAR(255),
-    email      VARCHAR(255)
---     created_at TIMESTAMP,
---     updated_at TIMESTAMP
+    id         BIGINT    DEFAULT nextval('customer_id_seq') PRIMARY KEY,
+    first_name VARCHAR(255),
+    last_name  VARCHAR(255),
+    email      VARCHAR(255),
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
 );
 
 CREATE TABLE "item_category"

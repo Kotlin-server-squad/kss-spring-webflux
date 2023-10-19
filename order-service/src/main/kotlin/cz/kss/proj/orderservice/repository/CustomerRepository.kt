@@ -14,11 +14,14 @@ interface CustomerRepository : BaseRepository<Customer, Long> {
 
 @Repository
 class CustomerRepositoryImpl(private val dbClient: DatabaseClient) : CustomerRepository {
+    companion object {
+        private const val SELECT_ALL = "SELECT c.id, c.first_name, c.last_name, c.email, c.created_at, c.updated_at FROM customer c"
+    }
     override fun findAll(): Flow<Customer> {
         return entities {
             dbClient.sql(
                 """
-                    SELECT c.id, c.name, c.email FROM customer c
+                    $SELECT_ALL
                 """.trimIndent()
             ).fetch().flow()
         }
@@ -28,7 +31,7 @@ class CustomerRepositoryImpl(private val dbClient: DatabaseClient) : CustomerRep
         return entity {
             dbClient.sql(
                 """
-                    SELECT c.id, c.name, c.email FROM customer c WHERE c.id = :id
+                    $SELECT_ALL WHERE c.id = :id
                 """.trimIndent()
             ).bind("id", id)
         }
@@ -39,21 +42,23 @@ class CustomerRepositoryImpl(private val dbClient: DatabaseClient) : CustomerRep
             update(entity) {
                 dbClient.sql(
                     """
-                        UPDATE customer SET name = :name, email = :email WHERE id = :id
+                        UPDATE customer c SET c.first_name = :first_name, c.last_name = :last_name,  c.email = :email WHERE id = :id
                     """.trimIndent()
                 )
                     .bind("id", id)
-                    .bind("name", entity.name)
+                    .bind("first_name", entity.firstName)
+                    .bind("last_name", entity.lastName)
                     .bind("email", entity.email)
             }
         } ?: run {
             insert(entity) {
                 dbClient.sql(
                     """
-                        INSERT INTO customer (name, email) VALUES (:name, :email)
+                        INSERT INTO customer (first_name, last_name, email) VALUES (:first_name, :last_name, :email)
                     """.trimIndent()
                 )
-                    .bind("name", entity.name)
+                    .bind("first_name", entity.firstName)
+                    .bind("last_name", entity.lastName)
                     .bind("email", entity.email)
             }
         }
@@ -82,18 +87,22 @@ class CustomerRepositoryImpl(private val dbClient: DatabaseClient) : CustomerRep
         }
     }
 
-    override fun toEntity(row: MutableMap<String, Any>): Customer? {
+    override fun    toEntity(row: MutableMap<String, Any>): Customer? {
         return if (
             (row["id"] == null || row["id"] !is Long) ||
-            (row["name"] == null) ||
+            (row["first_name"] == null) ||
+            (row["last_name"] == null) ||
             (row["email"] == null)
         ) {
             null
         } else {
             Customer(
                 id = row["id"] as Long,
-                name = row["name"] as String,
-                email = row["email"] as String
+                firstName = row["first_name"] as String,
+                lastName = row["last_name"] as String,
+                email = row["email"] as String,
+                createdAt = row.toMaybeInstant ("created_at"),
+                updatedAt = row.toMaybeInstant("updated_at")
             )
         }
     }
