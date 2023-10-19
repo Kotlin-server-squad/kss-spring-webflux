@@ -11,6 +11,7 @@ dependencies {
     implementation("io.projectreactor.kotlin:reactor-kotlin-extensions:$kotlinx_reactor_version")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:$kotlinx_version")
+    implementation("ch.qos.logback:logback-classic")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("io.kotest:kotest-runner-junit5-jvm:$kotest_version")

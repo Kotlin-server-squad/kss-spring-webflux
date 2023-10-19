@@ -1,7 +1,7 @@
-package cz.kss.proj.clientservice.service
+package cz.kss.proj.customerservice.service
 
-import cz.kss.proj.clientservice.dto.CreateCustomerDto
-import cz.kss.proj.clientservice.dto.CustomerDto
+import cz.kss.proj.customerservice.dto.CreateCustomerDto
+import cz.kss.proj.customerservice.dto.CustomerDto
 
 interface CustomerService {
     suspend fun createCustomer(customerDto: CreateCustomerDto): CustomerDto

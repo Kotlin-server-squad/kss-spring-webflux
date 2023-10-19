@@ -1,8 +1,8 @@
-package cz.kss.proj.clientservice.handler
+package cz.kss.proj.customerservice.handler
 
-import cz.kss.proj.clientservice.dto.CreateCustomerDto
-import cz.kss.proj.clientservice.dto.GetCustomerRequest
-import cz.kss.proj.clientservice.service.CustomerService
+import cz.kss.proj.customerservice.dto.CreateCustomerDto
+import cz.kss.proj.customerservice.dto.GetCustomerRequest
+import cz.kss.proj.customerservice.service.CustomerService
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.server.*

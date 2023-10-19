@@ -1,10 +1,10 @@
-package cz.kss.proj.clientservice.mapper
+package cz.kss.proj.customerservice.mapper
 
-import cz.kss.proj.clientservice.dto.*
-import cz.kss.proj.clientservice.entity.AdditionalInformation
-import cz.kss.proj.clientservice.entity.Address
-import cz.kss.proj.clientservice.entity.Customer
-import cz.kss.proj.clientservice.entity.Gender
+import cz.kss.proj.customerservice.dto.*
+import cz.kss.proj.customerservice.entity.AdditionalInformation
+import cz.kss.proj.customerservice.entity.Address
+import cz.kss.proj.customerservice.entity.Customer
+import cz.kss.proj.customerservice.entity.Gender
 
 
 fun CreateCustomerDto.toEntity(): Customer = Customer(

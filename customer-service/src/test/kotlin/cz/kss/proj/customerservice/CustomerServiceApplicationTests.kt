@@ -1,4 +1,4 @@
-package cz.kss.proj.clientservice
+package cz.kss.proj.customerservice
 
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest

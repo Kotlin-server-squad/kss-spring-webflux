@@ -1,4 +1,4 @@
-package cz.kss.proj.clientservice
+package cz.kss.proj.customerservice
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication

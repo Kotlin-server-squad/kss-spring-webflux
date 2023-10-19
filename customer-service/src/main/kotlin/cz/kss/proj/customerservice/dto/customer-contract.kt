@@ -1,4 +1,4 @@
-package cz.kss.proj.clientservice.dto
+package cz.kss.proj.customerservice.dto
 
 
 

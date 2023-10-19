@@ -1,4 +1,4 @@
-package cz.kss.proj.clientservice.entity
+package cz.kss.proj.customerservice.entity
 
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Table

@@ -1,4 +1,4 @@
-package cz.kss.proj.clientservice.config
+package cz.kss.proj.customerservice.config
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -9,6 +9,6 @@ import org.springframework.context.annotation.Configuration
 class CoreConfig {
     @Bean
     fun logger(): Logger {
-        return LoggerFactory.getLogger("customLogger")
+        return LoggerFactory.getLogger("cz.kss.proj.customerservice")
     }
 }

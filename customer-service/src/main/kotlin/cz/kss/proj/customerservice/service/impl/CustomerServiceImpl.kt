@@ -1,13 +1,15 @@
-package cz.kss.proj.clientservice.service.impl
+package cz.kss.proj.customerservice.service.impl
 
-import cz.kss.proj.clientservice.dto.CreateCustomerDto
-import cz.kss.proj.clientservice.dto.CustomerDto
-import cz.kss.proj.clientservice.mapper.toDto
-import cz.kss.proj.clientservice.mapper.toEntity
-import cz.kss.proj.clientservice.repository.CustomerRepository
-import cz.kss.proj.clientservice.service.CustomerService
+import cz.kss.proj.customerservice.config.context.TraceIdContext
+import cz.kss.proj.customerservice.dto.CreateCustomerDto
+import cz.kss.proj.customerservice.dto.CustomerDto
+import cz.kss.proj.customerservice.mapper.toDto
+import cz.kss.proj.customerservice.mapper.toEntity
+import cz.kss.proj.customerservice.repository.CustomerRepository
+import cz.kss.proj.customerservice.service.CustomerService
 import org.slf4j.Logger
 import org.springframework.stereotype.Service
+import kotlin.coroutines.coroutineContext
 
 @Service
 class CustomerServiceImpl(
@@ -24,7 +26,9 @@ class CustomerServiceImpl(
 //        val spanId = reactorContext.getOrDefault(TracingWebFilter.SPAN_ID, "UnknownSpanId")
 
         customerRepository.findById(customerId)?.let {
-            logger.info("customer $it")
+            val traceId = coroutineContext[TraceIdContext]
+            val correlationIdContext = coroutineContext[TraceIdContext]
+            logger.info("traceId $traceId correlationId $correlationIdContext customer $it")
         }
     }
 

@@ -1,4 +1,4 @@
-package cz.kss.proj.clientservice.repository
+package cz.kss.proj.customerservice.repository
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.mapNotNull

@@ -1,11 +1,10 @@
-package cz.kss.proj.clientservice.repository
+package cz.kss.proj.customerservice.repository
 
-import cz.kss.proj.clientservice.entity.Customer
-import cz.kss.proj.clientservice.entity.customerFromRow
+import cz.kss.proj.customerservice.entity.Customer
+import cz.kss.proj.customerservice.entity.customerFromRow
 import io.r2dbc.spi.Row
 import io.r2dbc.spi.RowMetadata
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.reactive.awaitSingleOrNull
 import kotlinx.coroutines.reactor.awaitSingle
 import kotlinx.coroutines.reactor.awaitSingleOrNull
 import org.springframework.data.r2dbc.convert.R2dbcConverter

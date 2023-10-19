@@ -1,6 +1,6 @@
-package cz.kss.proj.clientservice.repository
+package cz.kss.proj.customerservice.repository
 
-import cz.kss.proj.clientservice.entity.AdditionalInformation
+import cz.kss.proj.customerservice.entity.AdditionalInformation
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.reactor.awaitSingle
 import org.springframework.r2dbc.core.DatabaseClient
