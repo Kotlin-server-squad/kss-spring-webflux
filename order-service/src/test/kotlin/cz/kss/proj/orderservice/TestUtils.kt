@@ -8,6 +8,7 @@ fun<T : BaseEntity<I>, I> verifySavedEntity(expected: T, actual: T) {
         .usingRecursiveComparison()
         .ignoringFields("createdAt", "updatedAt")
         .isEqualTo(expected)
+    assertThat(actual.id).isNotNull
     assertThat(actual.createdAt).isNotNull
     assertThat(actual.updatedAt).isNotNull
 }
