@@ -11,5 +11,6 @@ data class Customer(
     @Column("last_name") val lastName: String,
     val email: String,
     @Column("created_at") override var createdAt: Instant? = null,
-    @Column("updated_at") override var updatedAt: Instant? = null
+    @Column("updated_at") override var updatedAt: Instant? = null,
+    val orders: List<Order> = emptyList()
 ) : BaseEntity<Long>
