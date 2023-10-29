@@ -16,7 +16,7 @@ import org.springframework.web.server.ServerWebExchange
 import kotlin.coroutines.CoroutineContext
 
 @Component
-class CoroutineContextFilter(private val logger: Logger, private val defaultCoroutineContext: CoroutineContext) : CoWebFilter() {
+    class CoroutineContextFilter(private val logger: Logger, private val defaultCoroutineContext: CoroutineContext) : CoWebFilter() {
     override suspend fun filter(exchange: ServerWebExchange, chain: CoWebFilterChain) {
         val correlationId = exchange.request.headers["x-correlation-id"]?.firstOrNull() ?: "requestIdNotProvided"
         val traceId = exchange.request.headers["x-trace-id"]?.firstOrNull() ?: "requestIdNotProvided"
