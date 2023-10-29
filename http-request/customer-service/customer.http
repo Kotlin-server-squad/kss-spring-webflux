@@ -1,0 +1,9 @@
+###
+GET http://localhost:8881/api/customer
+Content-Type: application/json
+x-trace-id: 1234a
+x-correlation-id: test1234
+
+{
+  "customerId": 1
+}

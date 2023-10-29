@@ -1,0 +1,6 @@
+server:
+  port: 8071
+
+customer:
+  base:
+    url: http://localhost:8881

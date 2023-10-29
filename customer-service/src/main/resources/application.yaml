@@ -1,0 +1,14 @@
+spring:
+  r2dbc:
+    url: r2dbc:postgresql://localhost:5435/kss-customer
+    username: kss
+    password: pass3321
+    properties:
+      schema: kss
+  flyway:
+    url: jdbc:postgresql://localhost:5435/kss-customer
+    user: kss
+    password: pass3321
+    default-schema: kss
+server:
+  port: 8881
