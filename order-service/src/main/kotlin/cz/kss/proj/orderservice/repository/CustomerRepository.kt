@@ -42,7 +42,7 @@ class CustomerRepositoryImpl(private val dbClient: DatabaseClient) : CustomerRep
             update(entity) {
                 dbClient.sql(
                     """
-                        UPDATE customer c SET c.first_name = :first_name, c.last_name = :last_name,  c.email = :email WHERE id = :id
+                        UPDATE customer SET first_name = :first_name, last_name = :last_name,  email = :email WHERE id = :id
                     """.trimIndent()
                 )
                     .bind("id", id)
