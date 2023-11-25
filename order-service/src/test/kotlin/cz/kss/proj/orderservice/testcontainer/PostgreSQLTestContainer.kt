@@ -11,10 +11,11 @@ import org.testcontainers.utility.DockerImageName
 annotation class PostgreSQLTestContainer
 
 @TestConfiguration(proxyBeanMethods = false)
-class PostgreSQLTestContainerConfiguration {
+private class PostgreSQLTestContainerConfiguration {
 
     @ServiceConnection
     @Bean
-    fun postgreSQLContainer() = PostgreSQLContainer(DockerImageName.parse("postgres:16.1"))
-            .withReuse(true)
+    fun postgreSQLContainer(): PostgreSQLContainer<*> =
+            PostgreSQLContainer(DockerImageName.parse("postgres:16.1"))
+                    .withReuse(true)
 }
