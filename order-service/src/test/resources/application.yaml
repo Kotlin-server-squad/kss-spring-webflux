@@ -1,15 +1,13 @@
 spring:
   r2dbc:
-    url: r2dbc:h2:file:///./tmp/test-database
-    username: sa
-    password:
+    schema: kss
     properties:
       schema: kss
   flyway:
-    url: jdbc:h2:file:./tmp/test-database
-    user: sa
-    password:
-    default-schema: kss
+#    default-schema: kss
+    locations:
+      - classpath:db/migration
+
 logging:
   level:
     org:

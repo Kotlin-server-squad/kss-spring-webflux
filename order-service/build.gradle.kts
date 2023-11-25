@@ -24,6 +24,7 @@ dependencies {
     testImplementation("io.kotest:kotest-assertions-core-jvm:$kotest_version")
     testImplementation("io.mockk:mockk:$mockk_version")
     testImplementation("io.projectreactor:reactor-test:$reactor_test_version")
-    testImplementation("com.h2database:h2")
-    testImplementation("io.r2dbc:r2dbc-h2:1.0.0.RELEASE")
+    testImplementation("org.springframework.boot:spring-boot-testcontainers")
+    testImplementation("org.testcontainers:r2dbc")
+    testImplementation("org.testcontainers:postgresql")
 }

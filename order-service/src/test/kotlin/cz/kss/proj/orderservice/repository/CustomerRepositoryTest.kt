@@ -1,36 +1,26 @@
 package cz.kss.proj.orderservice.repository
 
 import cz.kss.proj.orderservice.model.Customer
+import cz.kss.proj.orderservice.testcontainer.PostgreSQLTestContainer
 import cz.kss.proj.orderservice.verifySavedEntity
 import io.kotest.common.runBlocking
 import kotlinx.coroutines.flow.toList
-import org.flywaydb.core.Flyway
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.fail
-import org.slf4j.LoggerFactory
+import org.slf4j.Logger
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 
-@SpringBootTest
+@PostgreSQLTestContainer
+@SpringBootTest // TODO use test slices
 @ActiveProfiles("test")
-class CustomerRepositoryTest {
-
-    companion object {
-        @JvmStatic
-        @BeforeAll
-        fun init(@Autowired flyway: Flyway) {
-            flyway.migrate()
-        }
-    }
-
-    private val logger = LoggerFactory.getLogger(CustomerRepositoryTest::class.java)
-
-    @Autowired
-    private lateinit var customerRepository: CustomerRepository
+class CustomerRepositoryTest @Autowired constructor(
+        private val customerRepository: CustomerRepository,
+        private val logger: Logger
+) {
 
     @AfterEach
     fun tearDown() = runBlocking {
